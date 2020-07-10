@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="generator" content="pandoc" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+            <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
+            <style>
+                $styles.html()$
+            </style>
+            <link rel="stylesheet" href="/panam.css">
+        </head>
+        <body>
+            $if(backlink)$<p style="text-align: right;">$backlink$$endif$
+            $if(title)$<h1>$title$</h1><hr>$endif$
+$body$
+
+            <hr>
+                <small>
+            <center>
+                These writings represent my own personal views alone.<br>
+                Licensed under a <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+                Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+            </center>
+                </small>
+        </body>
+</html>
