@@ -33,12 +33,12 @@ _serve:
 $(OUTPUT_DIR)/index.html: index.md $(SUBBLURBS)
 	@mkdir -p "$(@D)"
 	find . -iname '*.blurb' | sort -r | xargs cat > $(OUTPUT_DIR)/_blurbs.md
-	pandoc "index.md" $(OUTPUT_DIR)/_blurbs.md --data-dir="$(PANDOC)" --highlight-style=tango --standalone --to=html5 --output="$(OUTPUT_DIR)/index.html"
+	pandoc "index.md" $(OUTPUT_DIR)/_blurbs.md --data-dir="$(PANDOC)" --standalone --to=html5 --output="$(OUTPUT_DIR)/index.html"
 
 $(OUTPUT_DIR)/%.html: %.md
 	@mkdir -p "$(@D)"
-	pandoc "$<" --data-dir="$(PANDOC)" --highlight-style=tango --standalone --to=html5 --output="$@"
-	pandoc "$<" --data-dir="$(PANDOC)" --highlight-style=tango --standalone --to=html5 --output="$@.blurb" --template=blurb -M URI=$(BASE_URL)/$*.html
+	pandoc "$<" --data-dir="$(PANDOC)" --standalone --to=html5 --output="$@"
+	pandoc "$<" --data-dir="$(PANDOC)" --standalone --to=html5 --output="$@.blurb" --template=blurb -M URI=$(BASE_URL)/$*.html
 
 $(SUBDIRS):
 	@make -f $(ABS_MAKEFILE) -C $@ PANDOC=$(PANDOC) OUTPUT_DIR=$(OUTPUT_DIR)/$@ BASE_URL=$(BASE_URL)/$@
