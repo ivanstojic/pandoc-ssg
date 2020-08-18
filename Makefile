@@ -1,5 +1,7 @@
 BASE_URL=
 
+PANDOC_ARGS=--no-highlight --shift-heading-level-by=1
+
 # There are no configurable options below this line, only the code of the generator itself.
 
 ABS_MAKEFILE=$(abspath $(lastword $(MAKEFILE_LIST)))
@@ -33,17 +35,21 @@ _serve:
 $(OUTPUT_DIR)/index.html: index.md $(SUBBLURBS)
 	@mkdir -p "$(@D)"
 	find . -iname '*.blurb' | sort -r | xargs cat > $(OUTPUT_DIR)/_blurbs.md
-	pandoc "index.md" $(OUTPUT_DIR)/_blurbs.md --data-dir="$(PANDOC)" --standalone --to=html5 --output="$(OUTPUT_DIR)/index.html"
+	pandoc $(PANDOC_ARGS) "index.md" $(OUTPUT_DIR)/_blurbs.md --data-dir="$(PANDOC)" --standalone --to=html5 --output="$(OUTPUT_DIR)/index.html"
 
 $(OUTPUT_DIR)/%.html: %.md
 	@mkdir -p "$(@D)"
-	pandoc "$<" --data-dir="$(PANDOC)" --standalone --to=html5 --output="$@"
-	pandoc "$<" --data-dir="$(PANDOC)" --standalone --to=html5 --output="$@.blurb" --template=blurb -M URI=$(BASE_URL)/$*.html
+	$(eval TEMPLATE := $(or $(shell pandoc $< --data-dir=$(PANDOC) --to=html5 --template=get_template --output=-), default))
+	pandoc $(PANDOC_ARGS) "$<" --data-dir="$(PANDOC)" --standalone --to=html5 --template=$(TEMPLATE) --output="$@"
+	pandoc $(PANDOC_ARGS) "$<" --data-dir="$(PANDOC)" --standalone --to=html5 --output="$@.blurb" --template=blurb -M URI=$(BASE_URL)/$*.html
 
+# To recurse, we need to pass along the path to Pandoc-SSG Makefile, but
+# also the option values that cannot be calculated once we are within a
+# subprocess.
 $(SUBDIRS):
 	@make -f $(ABS_MAKEFILE) -C $@ PANDOC=$(PANDOC) OUTPUT_DIR=$(OUTPUT_DIR)/$@ BASE_URL=$(BASE_URL)/$@
 
-# Catch-all: this is either a file that we just copy, or a directory into which we recurse
+# Catch-all: this is a file that we just copy
 $(OUTPUT_DIR)/%: %
 	@mkdir -p $(@D)
 	cp $< $@
